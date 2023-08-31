@@ -1,10 +1,15 @@
-KERNEL_SRC ?= /lib/modules/$(shell uname -r)/build
+KERNEL_CAMERA_DRIVER_PATH ?= $(srctree)/$(src)/../../../../../../../techpack/camera/drivers
 
-all:
-	$(MAKE) -C $(KERNEL_SRC) M=$(shell pwd) modules $(KBUILD_OPTIONS)
+ccflags-y += -DCONFIG_SPECTRA_CAMERA=1
+ccflags-y += -I$(KERNEL_CAMERA_DRIVER_PATH)/../include
+ccflags-y += -I$(KERNEL_CAMERA_DRIVER_PATH)/../include/uapi
+ccflags-y += -I$(KERNEL_CAMERA_DRIVER_PATH)/../include/uapi/camera
+ccflags-y += -I$(KERNEL_CAMERA_DRIVER_PATH)/cam_utils
+ccflags-y += -I$(KERNEL_CAMERA_DRIVER_PATH)/cam_cpas/include
+ccflags-y += -I$(KERNEL_CAMERA_DRIVER_PATH)/cam_sensor_module/cam_sensor_io
+ccflags-y += -I$(KERNEL_CAMERA_DRIVER_PATH)/cam_sensor_module/cam_sensor_utils
+ccflags-y += -I$(KERNEL_CAMERA_DRIVER_PATH)/cam_sensor_module/cam_cci
+ccflags-y += -I$(KERNEL_CAMERA_DRIVER_PATH)/cam_req_mgr
+ccflags-y += -I$(KERNEL_CAMERA_DRIVER_PATH)/cam_smmu
 
-modules_install:
-	$(MAKE) INSTALL_MOD_STRIP=1 -C $(KERNEL_SRC) M=$(shell pwd) modules_install
-
-clean:
-	$(MAKE) -C $(KERNEL_SRC) M=$(PWD) clean
+obj-$(CONFIG_CAMERA_CCI_INTF)	+= cci_intf.o
